@@ -2,6 +2,7 @@
 using ATONtest.DTO;
 using ATONtest.Interfaces;
 using ATONtest.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace ATONtest.Services
@@ -9,9 +10,11 @@ namespace ATONtest.Services
     public class UserControllerService : IUsersController
     {
         private DbUsersContext _context;
-        public UserControllerService(DbUsersContext context)
+       
+        public UserControllerService(DbUsersContext context )
         {
             _context = context;
+           
         }
 
         public async Task<User> CreateUser(CreateUserDto model)
@@ -36,6 +39,14 @@ namespace ATONtest.Services
                 CreatedOn = DateTime.Now,
                 ModifiedOn = DateTime.Now
             };
+            //if (user.Admin == true)
+            //{
+            //    await _roleManager.SetRoleNameAsync(, "Admin");
+            //}
+            //else
+            //{
+            //    await _roleManager.SetRoleNameAsync(, "User");
+            //}
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();

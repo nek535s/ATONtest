@@ -29,18 +29,19 @@ namespace ATONtest.Controllers
             _userscontext = userscontext;
         }
         // 1) Создание пользователя по логину, паролю, имени, полу и дате рождения + указание будет ли пользователь админом(Доступно Админам)  
+        [Authorize]
         [HttpPost("CreateUsers")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto model)
         {
             try
             {
-            var createduser = await _userscontext.CreateUser(model);
-            return Ok(createduser);
+                var createduser = await _userscontext.CreateUser(model);
+                return Ok(createduser);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-            return BadRequest(ex.Message);
-            }       
+                return BadRequest(ex.Message);
+            }
         }
         //2) Изменение имени, пола или даты рождения пользователя(Может менять Администратор, либо лично пользователь, если он активен (отсутствует RevokedOn))
         [HttpPatch("UpdateUserInfo/{login}")]
@@ -55,7 +56,7 @@ namespace ATONtest.Controllers
             {
                 return NotFound(ex.Message);
             }
-        }    
+        }
         //3) Изменение пароля(Пароль может менять либо Администратор, либо лично пользователь, если он активен (отсутствует RevokedOn))
         [HttpPatch("UpdatePass/{login}")]
         public async Task<IActionResult> UpdateUserPassword(string login, string pass, [FromBody] UpdatePassDTO updatePassDTO)
@@ -69,7 +70,7 @@ namespace ATONtest.Controllers
             {
                 return NotFound(ex.Message);
             }
-        }  
+        }
         //4) Изменение логина(Логин может менять либо Администратор, либо лично пользователь, если он активен (отсутствует RevokedOn), логин должен оставаться уникальным)
         [HttpPatch("UpdateLogin/{login}")]
         public async Task<IActionResult> UpdateUserLogin(string login, string pass, [FromBody] UpdateLoginDTO updateLoginDTO)
@@ -84,13 +85,15 @@ namespace ATONtest.Controllers
                 return ex.Message.Contains("уже используется") ? BadRequest(ex.Message) : NotFound(ex.Message);
             }
         }
+        [Authorize]
         //5) Запрос списка всех активных (отсутствует RevokedOn) пользователей, список отсортирован по CreatedOn(Доступно Админам)          
         [HttpGet("active")]
         public async Task<ActionResult<IEnumerable<User>>> GetActiveUsers()
         {
             var users = await _userscontext.GetActiveUsers();
             return Ok(users);
-        }    
+        }
+        [Authorize]
         //6) Запрос пользователя по логину, в списке долны быть имя, пол и дата рождения статус активный или нет(Доступно Админам)
         [HttpGet("CheckInfoByLogin/{login}")]
         public async Task<ActionResult> CheckInfo(string login)
@@ -117,10 +120,12 @@ namespace ATONtest.Controllers
 
             return Ok(new { message = "Есть такой пользователь с данным паролем" });
         }
+        
         // 8) Запрос всех пользователей старше определённого возраста(Доступно Админам)
+        [Authorize] 
         [HttpGet("olderthan/{age}")]
-            public async Task<ActionResult<IEnumerable<User>>> GetUsersOlderThan(int age)
-            {
+        public async Task<ActionResult<IEnumerable<User>>> GetUsersOlderThan(int age)
+        {
             var users = await _userscontext.GetUsersOlderThan(age);
 
             if (!users.Any())
@@ -129,8 +134,9 @@ namespace ATONtest.Controllers
             }
 
             return Ok(users);
-            }
+        }
         //Delete 9) Удаление пользователя по логину полное или мягкое(При мягком удалении должнапроисходить простановка RevokedOn и RevokedBy) (Доступно Админам)
+        [Authorize]
         [HttpDelete("DeleteUser")]
         public async Task<IActionResult> DeleteUser(string login, [FromQuery] string method)
         {
@@ -151,6 +157,7 @@ namespace ATONtest.Controllers
         }
 
         //Update-2 10) Восстановление пользователя - Очистка полей(RevokedOn, RevokedBy) (Доступно Админам)
+        [Authorize]
         [HttpPut("ClearRevokedFields")]
         public async Task<IActionResult> ClearRevokedFields(string login)
         {

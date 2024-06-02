@@ -1,5 +1,7 @@
 ﻿using ATONtest.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace ATONtest.Data
 {
@@ -9,6 +11,7 @@ namespace ATONtest.Data
         {
 
         }
+        
 
         public DbSet<User> Users { get; set; }
 
