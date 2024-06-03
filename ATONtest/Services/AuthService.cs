@@ -16,8 +16,6 @@ namespace ATONtest.Services
 
         public User ValidateUser(string login, string password)
         {
-            // Здесь должна быть логика для шифрования/проверки пароля,
-            // если вы храните пароли в зашифрованном виде.
             return _context.Users
                 .FirstOrDefault(u => u.Login == login && u.Password == password);
         }

@@ -71,7 +71,6 @@ builder.Services.AddAuthentication(options =>
     }
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        // Настройте параметры валидации токена здесь
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
