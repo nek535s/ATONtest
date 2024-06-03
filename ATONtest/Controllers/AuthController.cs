@@ -29,9 +29,9 @@ namespace ATONtest.Controllers
         public IActionResult Login([FromBody] LoginDTO loginModel)
         {
             var user = _authenticationService.ValidateUser(loginModel.Login, loginModel.Password);
-            if (user == null)
+            if (user == null || user.Admin == false)
             {
-                return Unauthorized();
+                return Unauthorized("Не существует данного пользователя/Не верный пароль/Пользователь не имеет прав админа");
             }
 
             var token = GenerateJwtToken(user);
